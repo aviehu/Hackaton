@@ -40,7 +40,7 @@ class Server:
         self.setUdpSocket()
 
         #Start broadcast
-        broadcast = UdpBroadcast(self.udpSocket, self.tcpSocket.getsockname()[0], self.thisIp, self.udpPort)
+        broadcast = UdpBroadcast(self.udpSocket, self.tcpSocket.getsockname()[1], self.thisIp, self.udpPort)
         broadcast.start()
         self.tcpSocket.listen(2)
         teamName_1 = ""
@@ -120,7 +120,7 @@ class UdpBroadcast(threading.Thread):
 
     def getUdpMessage(self):
         magicCookie = 0xabcddcba
-        messageType = 0x02
+        messageType = 0x2
         serverPort = self.tcpPort
         print(serverPort)
         return struct.pack('IbH', magicCookie, messageType, serverPort)
