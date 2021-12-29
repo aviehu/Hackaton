@@ -1,5 +1,6 @@
 
 from socket import *
+import struct
 import time
 import threading
 import random
@@ -19,11 +20,10 @@ class Server:
     def setTcpSocket(self):
         self.tcpSocket = socket(AF_INET, SOCK_STREAM)
         self.tcpSocket.setsockopt(SOL_SOCKET,SO_REUSEADDR, 1)
-        self.tcpSocket.bind((self.thisIp, 0))
+        self.tcpSocket.bind(('', 0))
 
     def setUdpSocket(self):
         self.udpSocket = socket(AF_INET, SOCK_DGRAM)
-        self.udpSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.udpSocket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
 
     def waitingOnClients(self):
@@ -96,10 +96,10 @@ class UdpBroadcast(threading.Thread):
 
 
     def getUdpMessage(self):
-        magicCookie = bytes.fromhex('abcddcba')
-        messageType = bytes.fromhex('02')
-        serverPort = self.tcpPort.to_bytes(2, 'big')
-        return b''.join([magicCookie, messageType, serverPort])
+        magicCookie = 0xabcddcba
+        messageType = 0x2
+        serverPort = self.tcpPort
+        return struct.pack('IbH', magicCookie, messageType, serverPort)
 
     def endBroadcast(self):
         self.end = True

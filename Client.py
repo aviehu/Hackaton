@@ -1,5 +1,6 @@
 import socket
 import select
+import struct
 import sys
 import scapy.all
 
@@ -25,7 +26,7 @@ class Client:
     def lookingForServer(self):
         self.setUdpSocket()
         try:
-            data, addr = self.udpSocket.recvfrom(1024)
+            data, addr = self.udpSocket.recvfrom(BUFFER_SIZE)
             print('Received offer from {}, attempting to connect...'.format(addr[0]))
         except Exception as err:
             print(err)
@@ -33,11 +34,12 @@ class Client:
         self.checkAndConnect(data)
 
     def checkAndConnect(self,data):
-        magicCookie = bytes.fromhex('abcddcba')
-        messageType = 2
-        if str(magicCookie) == str(data[0:4]) and str(messageType) == str(data[4]):
+        unPacked = struct.unpack('IbH', data)
+        magicCookie = 0xABCDDCBA
+        messageType = 0x2
+        if unPacked[0] == magicCookie and unPacked[1] == messageType:
             try:
-                currPort = int.from_bytes(data[5:7], "big")
+                currPort = unPacked[2]
                 self.tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.tcpSocket.connect((self.udpIp, currPort))
                 self.startGame()
