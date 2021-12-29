@@ -48,6 +48,7 @@ class Client:
             try:
                 currPort = unPacked[2]
                 self.tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                print('got here')
                 self.tcpSocket.connect((self.udpIp, currPort))
                 self.startGame()
             except Exception:
