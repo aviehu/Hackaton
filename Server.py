@@ -16,8 +16,9 @@ class Server:
         self.waitingOnClients()
                 
     def setTcpSocket(self):
-        self.tcpSocket = socket()
-        self.tcpSocket.bind(('', 0))
+        self.tcpSocket = socket(AF_INET, SOCK_STREAM)
+        self.tcpSocket.setsockopt(SOL_SOCKET,SO_REUSEADDR, 1)
+        self.tcpSocket.bind((self.thisIp, 0))
 
     def setUdpSocket(self):
         self.udpSocket = socket(AF_INET, SOCK_DGRAM)
@@ -36,9 +37,11 @@ class Server:
         (client1, addr1) = self.tcpSocket.accept()
         while(len(teamName_1) < 1):
             if not teamName_1: teamName_1 = client1.recv(BUFFER_LEN).decode()
+        print('{} has joined the match'.format(teamName_1))
         (client2, addr2) = self.tcpSocket.accept()
         while(len(teamName_2) < 1):
             if not teamName_2: teamName_2 = client2.recv(BUFFER_LEN).decode()
+        print('{} has joined the match'.format(teamName_2))
         client1.setblocking(0)
         client2.setblocking(0)
         #need to add second client
