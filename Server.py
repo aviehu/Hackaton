@@ -40,7 +40,7 @@ class Server:
         self.setUdpSocket()
 
         #Start broadcast
-        broadcast = UdpBroadcast(self.udpSocket, 0, self.thisIp, self.udpPort)
+        broadcast = UdpBroadcast(self.udpSocket, self.tcpSocket.getsockname()[0], self.thisIp, self.udpPort)
         broadcast.start()
         self.tcpSocket.listen(2)
         teamName_1 = ""
