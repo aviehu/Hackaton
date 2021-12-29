@@ -133,6 +133,7 @@ class TcpListener(threading.Thread):
                     else:
                         self.winner = self.otherTeamName
                         self.otherThread.setWinner(self.otherTeamName)
+
             except Exception as err:
                 time.sleep(0.1)
         try:
