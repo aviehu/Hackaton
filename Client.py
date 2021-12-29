@@ -22,9 +22,9 @@ class Client:
         self.setUdpSocket()
         try:
             data, addr = self.udpSocket.recvfrom(1024)
+            print('Received offer from {}, attempting to connect...'.format(addr[0]))
         except Exception as err:
             print(err)
-        print('Received offer from {}, attempting to connect...'.format(addr[0]))
         self.udpSocket.close()
         self.checkAndConnect(data)
 
@@ -34,7 +34,6 @@ class Client:
         if str(magicCookie) == str(data[0:4]) and str(messageType) == str(data[4]):
             try:
                 currPort = int.from_bytes(data[5:7], "big")
-                print(currPort)
                 self.tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.tcpSocket.connect((self.udpIp, currPort))
                 self.startGame()
@@ -47,10 +46,14 @@ class Client:
         teamName = input()
         self.tcpSocket.send(teamName.encode())
         print(self.tcpSocket.recv(1024).decode())
-        reads, _, _ = select.select([sys.stdin, self.tcpSocket], [], [], 10)
-        if(sys.stdin in reads):
-            userAns = sys.stdin.read(1)
-            self.tcpSocket.send(userAns.encode())
+        try:
+            reads, _, _ = select.select([sys.stdin, self.tcpSocket], [], [], 10)
+            if(sys.stdin in reads):
+                userAns = sys.stdin.read(1)
+                self.tcpSocket.send(userAns.encode())
+        except Exception as err:
+            self.tcpSocket.close()
+            self.lookingForServer()
         print(self.tcpSocket.recv(1024).decode())
         self.tcpSocket.close()
         print('Server disconnected, listening for offer requests...')
