@@ -7,6 +7,7 @@ import scapy.all
 TIME_TO_WAIT = 10
 BUFFER_LEN = 1024
 PORT = 13117
+UDP_IP = '172.99.255.255'
 class Server:
     def __init__(self):
         self.thisIp = scapy.all.get_if_addr('eth1')
@@ -89,7 +90,7 @@ class UdpBroadcast(threading.Thread):
         while(not self.end):
             time.sleep(1)
             try:
-                self.udpSocket.sendto(self.getUdpMessage(), (self.thisIp, self.udpPort))
+                self.udpSocket.sendto(self.getUdpMessage(), (UDP_IP, self.udpPort))
             except Exception as err:
                 print(err)
 

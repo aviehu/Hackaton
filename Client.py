@@ -5,7 +5,7 @@ import scapy.all
 
 BUFFER_SIZE = 1024
 PORT = 13117
-
+UDP_IP = '172.99.255.255'
 class Client:
     def __init__(self):
         self.teamName = 'Team Josh'
@@ -19,7 +19,7 @@ class Client:
     def setUdpSocket(self):
         self.udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udpSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.udpSocket.bind(('', self.udpPort))
+        self.udpSocket.bind((UDP_IP, self.udpPort))
 
     
     def lookingForServer(self):
