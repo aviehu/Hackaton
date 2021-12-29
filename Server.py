@@ -84,7 +84,7 @@ class UdpBroadcast(threading.Thread):
 
     def run(self):
         while(not self.end):
-            time.sleep(1)
+            time.sleep(0.1)
             try:
                 self.udpSocket.sendto(self.getUdpMessage(), (self.thisIp, self.udpPort))
             except Exception as err:
