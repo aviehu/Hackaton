@@ -120,7 +120,7 @@ class UdpBroadcast(threading.Thread):
 
     def getUdpMessage(self):
         magicCookie = 0xabcddcba
-        messageType = 0x2
+        messageType = 0x0002
         serverPort = self.tcpPort
         print(serverPort)
         return struct.pack('IbH', magicCookie, messageType, serverPort)
