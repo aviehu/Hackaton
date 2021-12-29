@@ -5,6 +5,7 @@ import scapy.all
 
 class Client:
     def __init__(self):
+        self.teamName = 'Team Josh'
         self.udpSocket = None
         self.tcpSocket = None
         self.udpIp = scapy.all.get_if_addr('eth1')
@@ -43,8 +44,8 @@ class Client:
             self.lookingForServer()
     
     def startGame(self):
-        teamName = input()
-        self.tcpSocket.send(teamName.encode())
+
+        self.tcpSocket.send(self.teamName.encode())
         print(self.tcpSocket.recv(1024).decode())
         try:
             reads, _, _ = select.select([sys.stdin, self.tcpSocket], [], [], 10)

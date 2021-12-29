@@ -84,7 +84,7 @@ class UdpBroadcast(threading.Thread):
 
     def run(self):
         while(not self.end):
-            time.sleep(0.1)
+            time.sleep(1)
             try:
                 self.udpSocket.sendto(self.getUdpMessage(), (self.thisIp, self.udpPort))
             except Exception as err:
@@ -95,7 +95,6 @@ class UdpBroadcast(threading.Thread):
         magicCookie = bytes.fromhex('abcddcba')
         messageType = bytes.fromhex('02')
         serverPort = self.tcpPort.to_bytes(2, 'big')
-        print(serverPort)
         return b''.join([magicCookie, messageType, serverPort])
 
     def endBroadcast(self):
