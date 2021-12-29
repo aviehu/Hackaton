@@ -15,7 +15,7 @@ UDP_IP = '172.99.255.255'
 class Server:
 
     def __init__(self):
-        self.thisIp = scapy.all.get_if_addr('eth1')
+        self.thisIp = scapy.all.get_if_addr('eth2')
         print(self.thisIp)
         self.udpPort = PORT
         print("Server started, listening on IP address {}".format(self.thisIp))
@@ -24,7 +24,7 @@ class Server:
     def setTcpSocket(self):
         self.tcpSocket = socket(AF_INET, SOCK_STREAM)
         self.tcpSocket.setsockopt(SOL_SOCKET,SO_REUSEADDR, 1)
-        self.tcpSocket.bind((UDP_IP, 41111))
+        self.tcpSocket.bind((UDP_IP, 0))
 
     def setUdpSocket(self):
         self.udpSocket = socket(AF_INET, SOCK_DGRAM)
