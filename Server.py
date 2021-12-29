@@ -1,15 +1,17 @@
 
 from socket import *
-import pynput
 import time
 import threading
 import random
+import bcolors
+import scapy.all
 
 class Server:
     def __init__(self):
-        self.thisIp = "127.0.0.1"
+        self.thisIp = scapy.all.get_if_addr('eth1')
+        print(self.thisIp)
         self.udpPort = 13117
-        print("Server started, listening on IP address {}".format(self.thisIp))
+        print("{}Server started, listening on IP address {}{}{}".format(bcolors.OK,bcolors.BLUE,self.thisIp,bcolors.ENDC))
         self.waitingOnClients()
                 
     def setTcpSocket(self):
@@ -62,7 +64,7 @@ class Server:
         listener1.join()
         listener2.join()
         self.tcpSocket.close()
-        print("Game over, sending out offer requests...")
+        print("{}Game over, sending out offer requests...{}".format(bcolors.OK,bcolors.ENDC))
         self.waitingOnClients()
 
     def getRandomQuestion(self):
@@ -88,7 +90,6 @@ class UdpBroadcast(threading.Thread):
                 self.udpSocket.sendto(self.getUdpMessage(), (self.thisIp, self.udpPort))
             except Exception as err:
                 print(err)
-            print('broadcast sent')
 
 
     def getUdpMessage(self):
@@ -136,7 +137,7 @@ class TcpListener(threading.Thread):
                         self.winner = self.otherTeamName
                         self.otherThread.setWinner(self.otherTeamName)
             except Exception as err:
-                None
+                time.sleep(0.1)
         if(self.winner):
             self.client.send('Game over!\nThe correct answer was {}\nCongratulations to the winner: {}'.format(self.ans, self.winner).encode())
         else:
