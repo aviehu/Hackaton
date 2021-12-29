@@ -35,7 +35,10 @@ class Client:
         self.checkAndConnect(data)
 
     def checkAndConnect(self,data):
-        unPacked = struct.unpack('IbH', data)
+        try:
+            unPacked = struct.unpack('IbH', data)
+        except Exception:
+            self.lookingForServer()
         magicCookie = 0xABCDDCBA
         messageType = 0x2
         print(unPacked[0])
