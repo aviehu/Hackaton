@@ -13,7 +13,7 @@ class Client:
         self.teamName = 'Team Josh'
         self.udpSocket = None
         self.tcpSocket = None
-        self.udpIp = scapy.all.get_if_addr('eth1')
+        self.udpIp = scapy.all.get_if_addr('eth2')
         self.udpPort = PORT
         print('Client started, listening for offer requests...')
         self.lookingForServer()
