@@ -39,11 +39,9 @@ class Client:
                 self.tcpSocket.connect((self.udpIp, currPort))
                 self.startGame()
             except Exception:
-                newData, addr = self.udpSocket.recvfrom(1024)
-                self.checkAndConnect(newData)
+                self.lookingForServer()
         else:
-            newData, addr = self.udpSocket.recvfrom(1024)
-            self.checkAndConnect(newData)
+            self.lookingForServer()
     
     def startGame(self):
         teamName = input()
