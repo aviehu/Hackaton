@@ -4,12 +4,14 @@ import time
 import threading
 import random
 import scapy.all
-
+TIME_TO_WAIT = 10
+BUFFER_LEN = 1024
+PORT = 13117
 class Server:
     def __init__(self):
         self.thisIp = scapy.all.get_if_addr('eth1')
         print(self.thisIp)
-        self.udpPort = 13117
+        self.udpPort = PORT
         print("Server started, listening on IP address {}".format(self.thisIp))
         self.waitingOnClients()
                 
@@ -33,10 +35,10 @@ class Server:
         teamName_2 = ""
         (client1, addr1) = self.tcpSocket.accept()
         while(len(teamName_1) < 1):
-            if not teamName_1: teamName_1 = client1.recv(1024).decode()
+            if not teamName_1: teamName_1 = client1.recv(BUFFER_LEN).decode()
         (client2, addr2) = self.tcpSocket.accept()
         while(len(teamName_2) < 1):
-            if not teamName_2: teamName_2 = client2.recv(1024).decode()
+            if not teamName_2: teamName_2 = client2.recv(BUFFER_LEN).decode()
         client1.setblocking(0)
         client2.setblocking(0)
         #need to add second client
@@ -45,7 +47,7 @@ class Server:
         self.game(client1, client2, teamName_1, teamName_2)
     
     def game(self, client1, client2, teamName_1, teamName_2):
-        time.sleep(10)
+        time.sleep(TIME_TO_WAIT)
         (ans, toPrint) = self.getRandomQuestion()
         welcomeMsg = 'Welcome to Quick Maths.\nPlayer 1: {}\nPlayer 2: {}\nPlease answer the following question as fast as you can:\n{}'.format(teamName_1, teamName_2, toPrint)
         client1.send(welcomeMsg.encode())
@@ -105,7 +107,7 @@ class TcpStopper(threading.Thread):
         self.t2 = thread2
     
     def run(self):
-        time.sleep(10)
+        time.sleep(TIME_TO_WAIT)
         if(self.t1.is_alive()): self.t1.finishListening()
         if(self.t2.is_alive()): self.t2.finishListening()
 
@@ -123,7 +125,7 @@ class TcpListener(threading.Thread):
     def run(self):
         while (not self.done):
             try:
-                clientAns = self.client.recv(1024).decode()
+                clientAns = self.client.recv(BUFFER_LEN).decode()
                 if (clientAns):
                     self.done = True
                     self.otherThread.finishListening()

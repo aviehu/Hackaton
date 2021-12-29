@@ -3,13 +3,16 @@ import select
 import sys
 import scapy.all
 
+BUFFER_SIZE = 1024
+PORT = 13117
+
 class Client:
     def __init__(self):
         self.teamName = 'Team Josh'
         self.udpSocket = None
         self.tcpSocket = None
         self.udpIp = scapy.all.get_if_addr('eth1')
-        self.udpPort = 13117
+        self.udpPort = PORT
         print('Client started, listening for offer requests...')
         self.lookingForServer()
 
@@ -46,7 +49,7 @@ class Client:
     def startGame(self):
 
         self.tcpSocket.send(self.teamName.encode())
-        print(self.tcpSocket.recv(1024).decode())
+        print(self.tcpSocket.recv(BUFFER_SIZE).decode())
         try:
             reads, _, _ = select.select([sys.stdin, self.tcpSocket], [], [], 10)
             if(sys.stdin in reads):
@@ -55,10 +58,10 @@ class Client:
         except Exception as err:
             self.tcpSocket.close()
             self.lookingForServer()
-        print(self.tcpSocket.recv(1024).decode())
+        print(self.tcpSocket.recv(BUFFER_SIZE).decode())
         self.tcpSocket.close()
         print('Server disconnected, listening for offer requests...')
         self.lookingForServer()
-        
+ 
         
 Client()
