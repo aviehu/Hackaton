@@ -38,6 +38,9 @@ class Client:
         unPacked = struct.unpack('IbH', data)
         magicCookie = 0xABCDDCBA
         messageType = 0x2
+        print(unPacked[0])
+        print(unPacked[1])
+        print(unPacked[2])
         if unPacked[0] == magicCookie and unPacked[1] == messageType:
             try:
                 currPort = unPacked[2]
