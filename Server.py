@@ -122,6 +122,7 @@ class UdpBroadcast(threading.Thread):
         magicCookie = 0xabcddcba
         messageType = 0x2
         serverPort = self.tcpPort
+        print(serverPort)
         return struct.pack('IbH', magicCookie, messageType, serverPort)
 
     def endBroadcast(self):
