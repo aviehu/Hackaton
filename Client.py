@@ -1,12 +1,13 @@
 import socket
 import select
 import sys
+import scapy.all
 
 class Client:
     def __init__(self):
         self.udpSocket = None
         self.tcpSocket = None
-        self.udpIp = '127.0.0.1'
+        self.udpIp = scapy.all.get_if_addr('eth1')
         self.udpPort = 13117
         print('Client started, listening for offer requests...')
         self.lookingForServer()
@@ -31,10 +32,14 @@ class Client:
         magicCookie = bytes.fromhex('abcddcba')
         messageType = 2
         if str(magicCookie) == str(data[0:4]) and str(messageType) == str(data[4]):
-            currPort = int.from_bytes(data[5:7], "big")
-            self.tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.tcpSocket.connect((self.udpIp, currPort))
-            self.startGame()
+            try:
+                currPort = int.from_bytes(data[5:7], "big")
+                print(currPort)
+                self.tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.tcpSocket.connect((self.udpIp, currPort))
+                self.startGame()
+            except Exception:
+                self.checkAndConnect(data)
         else:
             newData, addr = self.udpSocket.recvfrom(1024)
             self.checkAndConnect(newData)

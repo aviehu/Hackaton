@@ -3,7 +3,6 @@ from socket import *
 import time
 import threading
 import random
-import bcolors
 import scapy.all
 
 class Server:
@@ -11,7 +10,7 @@ class Server:
         self.thisIp = scapy.all.get_if_addr('eth1')
         print(self.thisIp)
         self.udpPort = 13117
-        print("{}Server started, listening on IP address {}{}{}".format(bcolors.OK,bcolors.BLUE,self.thisIp,bcolors.ENDC))
+        print("Server started, listening on IP address {}".format(self.thisIp))
         self.waitingOnClients()
                 
     def setTcpSocket(self):
@@ -64,7 +63,7 @@ class Server:
         listener1.join()
         listener2.join()
         self.tcpSocket.close()
-        print("{}Game over, sending out offer requests...{}".format(bcolors.OK,bcolors.ENDC))
+        print("Game over, sending out offer requests...")
         self.waitingOnClients()
 
     def getRandomQuestion(self):
@@ -95,7 +94,8 @@ class UdpBroadcast(threading.Thread):
     def getUdpMessage(self):
         magicCookie = bytes.fromhex('abcddcba')
         messageType = bytes.fromhex('02')
-        serverPort = self.tcpPort.to_bytes(2, byteorder='big')
+        serverPort = self.tcpPort.to_bytes(2, 'big')
+        print(serverPort)
         return b''.join([magicCookie, messageType, serverPort])
 
     def endBroadcast(self):
