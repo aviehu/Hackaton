@@ -7,6 +7,7 @@ import scapy.all
 BUFFER_SIZE = 1024
 PORT = 13117
 UDP_IP = '172.99.255.255'
+
 class Client:
     def __init__(self):
         self.teamName = 'Team Josh'

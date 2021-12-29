@@ -5,18 +5,22 @@ import time
 import threading
 import random
 import scapy.all
+
+#Constants
 TIME_TO_WAIT = 10
 BUFFER_LEN = 1024
 PORT = 13117
 UDP_IP = '172.99.255.255'
+
 class Server:
+
     def __init__(self):
         self.thisIp = scapy.all.get_if_addr('eth1')
         print(self.thisIp)
         self.udpPort = PORT
         print("Server started, listening on IP address {}".format(self.thisIp))
         self.waitingOnClients()
-                
+
     def setTcpSocket(self):
         self.tcpSocket = socket(AF_INET, SOCK_STREAM)
         self.tcpSocket.setsockopt(SOL_SOCKET,SO_REUSEADDR, 1)
@@ -26,30 +30,49 @@ class Server:
         self.udpSocket = socket(AF_INET, SOCK_DGRAM)
         self.udpSocket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
 
+    """
+        Description:
+            waiting for clients to connect
+    """
     def waitingOnClients(self):
+        #Set connections
         self.setTcpSocket()
         self.setUdpSocket()
 
+        #Start broadcast
         broadcast = UdpBroadcast(self.udpSocket, self.tcpSocket.getsockname()[1], self.thisIp, self.udpPort)
         broadcast.start()
         self.tcpSocket.listen(2)
         teamName_1 = ""
         teamName_2 = ""
+
+        #Connect and get first team name
         (client1, addr1) = self.tcpSocket.accept()
         while(len(teamName_1) < 1):
             if not teamName_1: teamName_1 = client1.recv(BUFFER_LEN).decode()
         print('{} has joined the match'.format(teamName_1))
+
+        #Connect and get second team name
         (client2, addr2) = self.tcpSocket.accept()
         while(len(teamName_2) < 1):
             if not teamName_2: teamName_2 = client2.recv(BUFFER_LEN).decode()
         print('{} has joined the match'.format(teamName_2))
         client1.setblocking(0)
         client2.setblocking(0)
-        #need to add second client
         broadcast.endBroadcast()
         broadcast.join()
         self.game(client1, client2, teamName_1, teamName_2)
     
+    """
+        Description:
+            Run game between client1 and client2
+
+        Params:
+            client1 - first team socket
+            client2 - second team socket
+            teamName_1 - first team name
+            teamName_2  - second team name
+    """
     def game(self, client1, client2, teamName_1, teamName_2):
         time.sleep(TIME_TO_WAIT)
         (ans, toPrint) = self.getRandomQuestion()
