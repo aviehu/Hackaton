@@ -29,24 +29,22 @@ class Server:
         broadcast = UdpBroadcast(self.udpSocket, self.tcpSocket.getsockname()[1], self.thisIp, self.udpPort)
         broadcast.start()
         self.tcpSocket.listen(2)
+        teamName_1 = ""
+        teamName_2 = ""
         (client1, addr1) = self.tcpSocket.accept()
+        while(len(teamName_1) < 1):
+            if not teamName_1: teamName_1 = client1.recv(1024).decode()
         (client2, addr2) = self.tcpSocket.accept()
+        while(len(teamName_2) < 1):
+            if not teamName_2: teamName_2 = client2.recv(1024).decode()
         client1.setblocking(0)
         client2.setblocking(0)
         #need to add second client
         broadcast.endBroadcast()
         broadcast.join()
-        self.game(client1, client2)
+        self.game(client1, client2, teamName_1, teamName_2)
     
-    def game(self, client1, client2):
-        teamName_1 = ""
-        teamName_2 = ""
-        while ((len(teamName_2) < 1) and (len(teamName_2) < 1)):
-            try:
-                if not teamName_1: teamName_1 = client1.recv(1024).decode()
-                if not teamName_2: teamName_2 = client2.recv(1024).decode()
-            except Exception as err:
-                None
+    def game(self, client1, client2, teamName_1, teamName_2):
         time.sleep(10)
         (ans, toPrint) = self.getRandomQuestion()
         welcomeMsg = 'Welcome to Quick Maths.\nPlayer 1: {}\nPlayer 2: {}\nPlease answer the following question as fast as you can:\n{}'.format(teamName_1, teamName_2, toPrint)
@@ -137,10 +135,13 @@ class TcpListener(threading.Thread):
                         self.otherThread.setWinner(self.otherTeamName)
             except Exception as err:
                 time.sleep(0.1)
-        if(self.winner):
-            self.client.send('Game over!\nThe correct answer was {}\nCongratulations to the winner: {}'.format(self.ans, self.winner).encode())
-        else:
-            self.client.send('Game over!\nIts a draw :(\nThe correct answer was {}\n'.format(self.ans).encode())
+        try:
+            if(self.winner):
+                self.client.send('Game over!\nThe correct answer was {}\nCongratulations to the winner: {}'.format(self.ans, self.winner).encode())
+            else:
+                self.client.send('Game over!\nIts a draw :(\nThe correct answer was {}\n'.format(self.ans).encode())
+        except Exception as err:
+            print('A player has disconnected, the game is over')
 
     def finishListening(self):
         self.done = True
