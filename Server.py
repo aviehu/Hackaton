@@ -24,7 +24,7 @@ class Server:
     def setTcpSocket(self):
         self.tcpSocket = socket(AF_INET, SOCK_STREAM)
         self.tcpSocket.setsockopt(SOL_SOCKET,SO_REUSEADDR, 1)
-        self.tcpSocket.bind((UDP_IP, 0))
+        self.tcpSocket.bind((UDP_IP, 41111))
 
     def setUdpSocket(self):
         self.udpSocket = socket(AF_INET, SOCK_DGRAM)
